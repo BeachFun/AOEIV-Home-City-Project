@@ -1,0 +1,4 @@
+repository "NewApoikiaTest@Project_Tavern@cloud"
+  path "/"
+    br "/main"
+    co "/main"
