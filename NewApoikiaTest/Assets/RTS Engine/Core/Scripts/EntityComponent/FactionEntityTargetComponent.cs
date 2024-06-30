@@ -265,7 +265,6 @@ namespace RTSEngine.EntityComponent
                 return Entity.TasksQueue.Add(new SetTargetInputData 
                 {
                     componentCode = Code,
-
                     target = input.target,
                     playerCommand = input.playerCommand,
                 });

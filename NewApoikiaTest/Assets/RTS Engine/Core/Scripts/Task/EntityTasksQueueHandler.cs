@@ -35,10 +35,13 @@ namespace RTSEngine.Task
         public string RunningQueueTaskCompCode { private set; get; }
 
         protected ITaskManager taskMgr { private set; get; }
-        #endregion
 
-        #region Initializing/Terminating
-        protected override void OnInit()
+		public event Action<SetTargetInputData> TaskAddedToQueue;
+
+		#endregion
+
+		#region Initializing/Terminating
+		protected override void OnInit()
         {
             queue = new List<SetTargetInputData>();
 
@@ -134,14 +137,16 @@ namespace RTSEngine.Task
         #region Adding Tasks
         public bool CanAdd(SetTargetInputData input)
         {
+
             if (IsActive
                 && input.playerCommand
                 && !input.fromTasksQueue
                 && Entity.IsLocalPlayerFaction()
                 && taskMgr.IsTaskQueueEnabled)
             {
-                //return unlimitedCapacity || QueueCount < maxCapacity;
-                return true;
+				//return unlimitedCapacity || QueueCount < maxCapacity;
+
+				return true;
             }
             else
             {
@@ -159,7 +164,11 @@ namespace RTSEngine.Task
             input.fromTasksQueue = true;
             queue.Add(input);
 
-            bool canStopCollectingResource = resourceCollector.IsValid() && resourceCollector.HasTarget && excludeResourceCollectionInKeepActiveTask;
+			TaskAddedToQueue?.Invoke(input);
+			//Debug.Log($"Task added to queue: {input.componentCode}, Target: {input.target.instance.Name}");
+
+
+			bool canStopCollectingResource = resourceCollector.IsValid() && resourceCollector.HasTarget && excludeResourceCollectionInKeepActiveTask;
 
             if (launchOnEmpty && (!IsRunningQueueTask || canStopCollectingResource) && queue.Count == 1)
             {
