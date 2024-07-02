@@ -36,8 +36,6 @@ namespace RTSEngine.Task
 
         protected ITaskManager taskMgr { private set; get; }
 
-		public event Action<SetTargetInputData> TaskAddedToQueue;
-
 		#endregion
 
 		#region Initializing/Terminating
@@ -46,7 +44,7 @@ namespace RTSEngine.Task
             queue = new List<SetTargetInputData>();
 
             Entity.EntityComponentUpgraded += HandleEntityComponentUpgraded;
-
+              
             this.taskMgr = gameMgr.GetService<ITaskManager>();
 
             IsRunningQueueTask = false;
@@ -108,11 +106,11 @@ namespace RTSEngine.Task
 
             if (queue.Count == 0)
                 IsRunningQueueTask = false;
-        }
-        #endregion
+		}
+		#endregion
 
-        #region Launching Actions
-        public override ErrorMessage LaunchActionLocal(byte actionID, SetTargetInputData input)
+		#region Launching Actions
+		public override ErrorMessage LaunchActionLocal(byte actionID, SetTargetInputData input)
         {
             switch ((TasksQueueActionType)actionID)
             {
@@ -137,6 +135,8 @@ namespace RTSEngine.Task
         #region Adding Tasks
         public bool CanAdd(SetTargetInputData input)
         {
+            if (Entity.IsLocalPlayerFaction())
+                Debug.Log("CAN ADD: " + input.componentCode + ", IsActive: " + IsActive + ", input.playerCommand: " + input.playerCommand + ", !input.fromTasksQueue: " + !input.fromTasksQueue + ", Entity.IsLocalPlayerFaction(): " + Entity.IsLocalPlayerFaction() + ", taskMgr.IsTaskQueueEnabled: " + taskMgr.IsTaskQueueEnabled);
 
             if (IsActive
                 && input.playerCommand
@@ -144,8 +144,26 @@ namespace RTSEngine.Task
                 && Entity.IsLocalPlayerFaction()
                 && taskMgr.IsTaskQueueEnabled)
             {
-				//return unlimitedCapacity || QueueCount < maxCapacity;
+                //return unlimitedCapacity || QueueCount < maxCapacity;
+                return true;
+            }
+            else if (IsActive
+                && input.playerCommand
+                && !input.fromTasksQueue
+                && Entity.IsLocalPlayerFaction()
+                && !taskMgr.IsTaskQueueEnabled)
+            {
+				Debug.Log("SECOND " + ", IsRunningQueueTask: " + IsRunningQueueTask + ", !string.IsNullOrEmpty(RunningQueueTaskCompCode): " + !string.IsNullOrEmpty(RunningQueueTaskCompCode));
 
+				if (IsRunningQueueTask && !string.IsNullOrEmpty(RunningQueueTaskCompCode))
+                {
+                    Debug.Log("ATTEMPT TO STOP");
+                    StopCurrentTaskAndMoveToNext();
+                }
+				if (!input.fromTasksQueue)
+				{
+					Clear();
+				}
 				return true;
             }
             else
@@ -156,17 +174,25 @@ namespace RTSEngine.Task
             }
         }
 
-        public ErrorMessage Add(SetTargetInputData input)
+		public void StopCurrentTaskAndMoveToNext()
+		{
+			if (Entity.EntityTargetComponents.TryGetValue(RunningQueueTaskCompCode, out IEntityTargetComponent component))
+			{
+				Debug.Log("STOPPING");
+
+				component.Stop();
+			}
+		}
+
+		public ErrorMessage Add(SetTargetInputData input)
             => LaunchAction((byte)TasksQueueActionType.addAndLaunchOnEmpty, input);
 
         private ErrorMessage AddLocal(SetTargetInputData input, bool launchOnEmpty = true)
         {
-            input.fromTasksQueue = true;
+			Debug.Log("ADD LOCAL: " + input.componentCode + ", launchonempty: " + launchOnEmpty);
+
+			input.fromTasksQueue = true;
             queue.Add(input);
-
-			TaskAddedToQueue?.Invoke(input);
-			//Debug.Log($"Task added to queue: {input.componentCode}, Target: {input.target.instance.Name}");
-
 
 			bool canStopCollectingResource = resourceCollector.IsValid() && resourceCollector.HasTarget && excludeResourceCollectionInKeepActiveTask;
 
@@ -184,7 +210,7 @@ namespace RTSEngine.Task
                 else
                 {
                     SetRunningComponent(activeTargetComponent.Code, force: true);
-                }
+				}
             }
 
             return ErrorMessage.none;
@@ -195,11 +221,21 @@ namespace RTSEngine.Task
             if (queue.Count == 0)
                 return false;
 
-            SetTargetInputData nextInput = queue[0];
+            if (!directLaunch)
+            {
+				queue.RemoveAt(0);
+			}
+
+            if (queue.Count == 0)
+            {
+                return false;
+            }
+
+			SetTargetInputData nextInput = queue[0];
             // Mark the task as a player command only if it is marked as the first one to launch in the queue.
             nextInput.playerCommand = directLaunch;
 
-            queue.RemoveAt(0);
+            //queue.RemoveAt(0);
 
             if (!Entity.EntityTargetComponents[nextInput.componentCode].IsTargetValid(nextInput, out ErrorMessage errorMessage))
                 return false;
@@ -210,7 +246,7 @@ namespace RTSEngine.Task
 
             SetRunningComponent(nextInput.componentCode, force: true);
 
-            return true;
+			return true;
         }
 
         private ErrorMessage SetRunningComponent(string componentCode, bool force = false)
