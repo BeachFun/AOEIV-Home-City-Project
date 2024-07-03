@@ -212,11 +212,31 @@ namespace RTSEngine.EntityComponent
         {
             // Update the movement time modified values to keep up with the time modifier
             Controller.Data = TimeModifiedControllerData;
-        }
-        #endregion
+			UpdateMovementData();
+		}
 
-        #region Activating/Deactivating Component
-        protected override void OnTargetActiveStatusUpdated()
+		private float speedMultiplier = 1f;
+
+		public void ModifySpeedMultiplier(float multiplier)
+		{
+			speedMultiplier = Mathf.Clamp(multiplier, 0.1f, 1f);
+			UpdateMovementData();
+		}
+
+		private void UpdateMovementData()
+		{
+			Controller.Data = new MovementControllerData
+			{
+				speed = speed.Value * speedMultiplier,
+				acceleration = acceleration.Value,
+				angularSpeed = mvtAngularSpeed.Value,
+				stoppingDistance = mvtMgr.StoppingDistance
+			};
+		}
+		#endregion
+
+		#region Activating/Deactivating Component
+		protected override void OnTargetActiveStatusUpdated()
         {
             Controller.Enabled = IsActive;
         }

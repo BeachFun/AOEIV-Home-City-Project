@@ -193,17 +193,65 @@ namespace RTSEngine.EntityComponent
             unit.MovementComponent.UpdateRotationTarget(Target.instance, Target.instance.transform.position);
         }
 
-        protected override void OnProgress()
+		private CarriableItem carriedItem;
+		[SerializeField, Tooltip("Transform to attach carried items to")]
+		private Transform carryAttachPoint;
+
+		protected override void OnProgress()
         {
-            if (!collectableResourcesDic[Target.instance.ResourceType].loopProgressAudio)
-                audioMgr.PlaySFX(unit.AudioSourceComponent, collectableResourcesDic[Target.instance.ResourceType].progressAudio.Fetch(), false);
+			if (Target.instance is CarriableItem carriableItem && carriedItem == null)
+			{
+				CollectCarriableItem(carriableItem);
+			}
+			else
+            {
+				if (!collectableResourcesDic[Target.instance.ResourceType].loopProgressAudio)
+					audioMgr.PlaySFX(unit.AudioSourceComponent, collectableResourcesDic[Target.instance.ResourceType].progressAudio.Fetch(), false);
 
-            Target.instance.Health.Add(new HealthUpdateArgs(-collectableResourcesDic[Target.instance.ResourceType].amount, unit));
+				Target.instance.Health.Add(new HealthUpdateArgs(-collectableResourcesDic[Target.instance.ResourceType].amount, unit));
+			}
         }
-        #endregion
 
-        #region Searching/Updating Target
-        public override bool CanSearch => true;
+		private void CollectCarriableItem(CarriableItem item)
+		{
+			if (carriedItem == null)
+			{
+				carriedItem = item;
+				item.AttachToUnit(carryAttachPoint);
+
+				if (unit.MovementComponent is UnitMovement unitMovement)
+				{
+					unitMovement.ModifySpeedMultiplier(1f - (item.Weight * 0.1f));
+				}
+
+				Stop();
+			}
+			else
+			{
+				Stop();
+			}
+		}
+
+		public void DropCarriedItem()
+		{
+			if (carriedItem != null)
+			{
+				Vector3 dropPosition = unit.transform.position + unit.transform.forward * 1.5f; // Drop in front of the unit
+				carriedItem.Drop(dropPosition);
+
+				if (unit.MovementComponent is UnitMovement unitMovement)
+				{
+					unitMovement.ModifySpeedMultiplier(1f);
+				}
+
+				carriedItem = null;
+			}
+		}
+
+		#endregion
+
+		#region Searching/Updating Target
+		public override bool CanSearch => true;
 
         public override float GetProgressRange()
             => Target.instance.WorkerMgr.GetOccupiedPosition(unit, out _)
