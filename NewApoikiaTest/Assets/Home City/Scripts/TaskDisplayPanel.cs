@@ -54,6 +54,7 @@ public class TaskDisplayPanel : MonoBehaviour
 				// If we don't have enough items in our list, create a new one
 				item = Instantiate(displayItemPrefab, transform);
 				taskDisplayItemList.Add(item);
+				Debug.Log("adding task display item for: " + task.componentCode);
 			}
 			else
 			{
