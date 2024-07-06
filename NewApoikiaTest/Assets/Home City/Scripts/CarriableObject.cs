@@ -2,12 +2,14 @@ using UnityEngine;
 using RTSEngine.Entities;
 using RTSEngine.Game;
 using RTSEngine.EntityComponent;
+using UnityEngine.AI;
 
 namespace RTSEngine.Custom
 {
     public class CarriableObject : EntityComponentBase, IEntityComponent
     {
         protected IEntity entity { private set; get; }
+        private NavMeshObstacle navMeshObstacle;
 
         protected override void OnInit()
         {
@@ -25,11 +27,18 @@ namespace RTSEngine.Custom
             Debug.Log($"[CarriableObject] OnPickedUp called by Carrier: {carrier}");
             currentCarrier = carrier;
             // Disable physics, colliders, etc.
+            navMeshObstacle = entity.gameObject.GetComponent<NavMeshObstacle>();
+            if (navMeshObstacle != null)
+            {
+                Debug.Log("[CarriableObject] Disabling movement component");
+                navMeshObstacle.enabled = false;
+            }
             if (entity.MovementComponent.IsValid())
             {
                 Debug.Log("[CarriableObject] Disabling movement component");
                 entity.MovementComponent.SetActiveLocal(false, false);
             }
+
         }
 
         public void OnPutDown()
@@ -41,6 +50,10 @@ namespace RTSEngine.Custom
             {
                 Debug.Log("[CarriableObject] Enabling movement component");
                 entity.MovementComponent.SetActiveLocal(true, false);
+            }
+            if (navMeshObstacle != null)
+            {
+                navMeshObstacle.enabled = true;
             }
         }
     }

@@ -32,7 +32,8 @@ namespace RTSEngine.Custom
        public bool IsCarrying => carriedObject != null;
 
        // Carrier states
-       private enum CarrierState { Idle, MovingToPickup, PickingUp, Carrying, MovingToPutdown, PuttingDown }
+       public enum CarrierState { Idle, MovingToPickup, PickingUp, Carrying, MovingToPutdown, PuttingDown }
+        [SerializeField]
        private CarrierState currentState = CarrierState.Idle;
 
        private float interactionTimer = 0f;
@@ -43,10 +44,11 @@ namespace RTSEngine.Custom
        protected IMovementManager mvtMgr { private set; get; }
        protected IInputManager inputMgr { private set; get; }
 
-       [SerializeField, Tooltip("UI data for the carry action")]
-       private EntityComponentTaskUIAsset carryTaskUI = null;
+      // [SerializeField, Tooltip("UI data for the carry action")]
+      // private EntityComponentTaskUIAsset carryTaskUI = null;
 
-        private float stoppingDistance = 2.0f;
+        [SerializeField]
+        private float stoppingDistance = 1f;
 
         #endregion
 
@@ -110,7 +112,7 @@ namespace RTSEngine.Custom
            if (input.playerCommand && Target.instance.IsValid() && factionEntity.IsLocalPlayerFaction())
                selector.FlashSelection(Target.instance, factionEntity.IsFriendlyFaction(Target.instance));
 
-           Debug.Log("OnTargetPostLocked: " + Target.instance.gameObject);
+           //Debug.Log("OnTargetPostLocked: " + Target.instance.gameObject);
 
            OnTargetPostLocked(input, sameTarget);
 
@@ -184,6 +186,7 @@ namespace RTSEngine.Custom
                new MovementSource { playerCommand = input.playerCommand });
        }*/
 
+        /*
         public override bool OnAwaitingTaskTargetSet(EntityComponentTaskUIAttributes taskAttributes, TargetData<IEntity> target)
        {
            if (carryTaskUI.IsValid() && taskAttributes.data.code == carryTaskUI.Data.code)
@@ -201,7 +204,8 @@ namespace RTSEngine.Custom
            }
 
            return base.OnAwaitingTaskTargetSet(taskAttributes, target);
-       }
+       }*/
+
        #endregion
 
        #region Update Logic
@@ -237,14 +241,18 @@ namespace RTSEngine.Custom
 
                case CarrierState.MovingToPutdown:
                    if (IsTargetInRange(Unit.transform.position, Target))
-                   {
-                       currentState = CarrierState.PuttingDown;
+                    {
+                        Debug.Log("[Carrier] In range - Putting down object");
+
+                        currentState = CarrierState.PuttingDown;
                        interactionTimer = interactionDuration;
                    }
                    break;
 
                case CarrierState.PuttingDown:
-                   interactionTimer -= Time.deltaTime;
+                    Debug.Log("[Carrier] In range - PUT down object");
+
+                    interactionTimer -= Time.deltaTime;
                    if (interactionTimer <= 0)
                    {
                        PutDownObject();
@@ -270,7 +278,7 @@ namespace RTSEngine.Custom
                carriedObject = carriable;
                carriable.OnPickedUp(this);
                carriable.transform.SetParent(Unit.transform);
-               carriable.transform.localPosition = new Vector3(0, Unit.Radius, 0);
+               carriable.transform.localPosition = new Vector3(0, Unit.Radius + 1f, 0);
            }
            else
            {
@@ -279,7 +287,7 @@ namespace RTSEngine.Custom
            Stop();
        }
 
-       private void PutDownObject()
+        private void PutDownObject()
        {
            if (carriedObject != null)
            {
@@ -293,6 +301,7 @@ namespace RTSEngine.Custom
        #endregion
 
        #region Task UI
+        /*
        protected override bool OnTaskUICacheUpdate(List<EntityComponentTaskUIAttributes> taskUIAttributesCache, List<string> disabledTaskCodesCache)
        {
            if (!base.OnTaskUICacheUpdate(taskUIAttributesCache, disabledTaskCodesCache))
@@ -311,8 +320,9 @@ namespace RTSEngine.Custom
            }
 
            return true;
-       }
+       }*/
 
+        /*
        public override bool OnTaskUIClick(EntityComponentTaskUIAttributes taskAttributes)
        {
            if (carryTaskUI.IsValid() && taskAttributes.data.code == carryTaskUI.Data.code)
@@ -339,7 +349,8 @@ namespace RTSEngine.Custom
            }
 
            return base.OnTaskUIClick(taskAttributes);
-       }
+       }*/
+
        #endregion
 
        #region Handling Target
@@ -413,21 +424,10 @@ namespace RTSEngine.Custom
 
         public override bool IsTargetInRange(Vector3 sourcePosition, TargetData<IEntity> target)
         {
-            float range = IsCarrying ? stoppingDistance : stoppingDistance + (target.instance?.Radius ?? 0f);
+            float range = IsCarrying ? stoppingDistance + 2f : stoppingDistance + (target.instance?.Radius ?? 0f); //TODO: UPDATE STOPPING DISTANCE. This should be something more specific. For some reason the Villager doesn't walk to the location. He's always 2.3f distance away. Need to look into this. Villager should walk closer or something.
+            Debug.Log("Is target in range: " + Vector3.Distance(sourcePosition, target.position) + ", range: " + range);
             return Vector3.Distance(sourcePosition, target.position) <= range;
         }
-
-        protected override void OnStop()
-       {
-           base.OnStop();
-
-           if (IsCarrying)
-           {
-             //  PutDownObject();
-           }
-
-           Unit.SetIdle(true);
-       }
        #endregion*/
 
 
