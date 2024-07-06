@@ -25,7 +25,7 @@ MonoBehaviour:
     hideTooltipOnClick: 1
     reloadTime: 0.1
     cursor:
-      icon: {fileID: 0}
+      icon: {fileID: 21300000, guid: a93ee83b7e55b1743ab00a6b3c415d03, type: 3}
       texture: {fileID: 0}
-      hotspot: {x: 0, y: 0}
+      hotspot: {x: 15, y: 15}
     controlType: {fileID: 0}

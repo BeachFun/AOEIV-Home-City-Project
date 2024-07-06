@@ -68,6 +68,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3687666390238168666}
   - component: {fileID: 9044129493704804065}
+  - component: {fileID: 8377128329128974739}
+  - component: {fileID: 5344455985581572295}
   - component: {fileID: 6143305097573700436}
   m_Layer: 0
   m_Name: unit_components
@@ -194,6 +196,199 @@ MonoBehaviour:
       defaultValueRange:
         _min: 1
         _max: 2
+--- !u!114 &8377128329128974739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301427565534965799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b611935c044ac3479865dddaa61c62b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  code: hc_villager_ResourceCollector_92
+  isActive: 1
+  tabID:
+    x: 1
+    y: 0
+  priority: 0
+  requireIdleEntity: 1
+  targetFinderData:
+    enabled: 0
+    reloadTime: 5
+    range: 10
+    idleOnly: 1
+    typePicker:
+      type: 0
+      options:
+        codes: []
+        categories: []
+      targetUnits: 1
+      targetBuildings: 1
+      targetResources: 1
+    center: {fileID: 0}
+  setTargetTaskUI: {fileID: 11400000, guid: 7b4309289d49540969df91f9798f0683, type: 2}
+  orderAudio:
+    fetchType: 0
+    items: []
+    cooldown:
+      enabled: 1
+      defaultValueRange:
+        _min: 1
+        _max: 2
+  showTargetGizmo: 1
+  progressEnabledAudio:
+    fetchType: 0
+    items: []
+    cooldown:
+      enabled: 1
+      defaultValueRange:
+        _min: 1
+        _max: 2
+  progressOverrideController:
+    fetchType: 0
+    items: []
+  progressDuration: 1
+  progressMaxDistance: 1.5
+  inProgressObject: {fileID: 0}
+  sourceEffect:
+    input: {fileID: 0}
+  targetEffect:
+    input: {fileID: 0}
+  showProgressGizmo: 1
+  collectableResources:
+  - type: {fileID: 11400000, guid: 07e3a929bad534a48854cc3274f8b8cb, type: 2}
+    orderAudio:
+      fetchType: 0
+      items: []
+      cooldown:
+        enabled: 0
+        defaultValueRange:
+          _min: 0
+          _max: 0
+    amount: 0
+    animatorOverrideController:
+      fetchType: 0
+      items: []
+    enableObject: {fileID: 0}
+    enableAudio:
+      fetchType: 0
+      items: []
+      cooldown:
+        enabled: 0
+        defaultValueRange:
+          _min: 0
+          _max: 0
+    sourceEffect:
+      input: {fileID: 0}
+    targetEffect:
+      input: {fileID: 0}
+    progressAudio:
+      fetchType: 0
+      items: []
+      cooldown:
+        enabled: 0
+        defaultValueRange:
+          _min: 0
+          _max: 0
+    loopProgressAudio: 0
+  - type: {fileID: 11400000, guid: a3e40a20a0b603d4793ed1985b005aed, type: 2}
+    orderAudio:
+      fetchType: 0
+      items: []
+      cooldown:
+        enabled: 0
+        defaultValueRange:
+          _min: 0
+          _max: 0
+    amount: 0
+    animatorOverrideController:
+      fetchType: 0
+      items: []
+    enableObject: {fileID: 0}
+    enableAudio:
+      fetchType: 0
+      items: []
+      cooldown:
+        enabled: 0
+        defaultValueRange:
+          _min: 0
+          _max: 0
+    sourceEffect:
+      input: {fileID: 0}
+    targetEffect:
+      input: {fileID: 0}
+    progressAudio:
+      fetchType: 0
+      items: []
+      cooldown:
+        enabled: 0
+        defaultValueRange:
+          _min: 0
+          _max: 0
+    loopProgressAudio: 0
+  onTargetResourceFullSearch: 1
+  onTargetResourceDepletedSearch: 1
+  carryAttachPoint: {fileID: 0}
+--- !u!114 &5344455985581572295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301427565534965799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 160a6844ec79b1a46bd1ada800ddf31c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  code: hc_villager_DropOffSource_139
+  isActive: 1
+  tabID:
+    x: 1
+    y: 0
+  priority: 0
+  requireIdleEntity: 1
+  targetFinderData:
+    enabled: 0
+    reloadTime: 5
+    range: 10
+    idleOnly: 1
+    typePicker:
+      type: 0
+      options:
+        codes: []
+        categories: []
+      targetUnits: 1
+      targetBuildings: 1
+      targetResources: 1
+    center: {fileID: 0}
+  setTargetTaskUI: {fileID: 0}
+  orderAudio:
+    fetchType: 0
+    items: []
+    cooldown:
+      enabled: 1
+      defaultValueRange:
+        _min: 1
+        _max: 2
+  showTargetGizmo: 1
+  targetPicker:
+    type: 0
+    options:
+      codes: []
+      categories: []
+    targetUnits: 1
+    targetBuildings: 1
+  maxDropOffDistanceEnabled: 0
+  maxDropOffDistance: 10
+  dropOffResources: []
+  totalMaxCapacity: 10
+  dropOffOnTargetAvailable: 1
+  showDropOffPosition: 1
+  editorFoldout: 0
 --- !u!114 &6143305097573700436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,8 +434,10 @@ MonoBehaviour:
   showTargetGizmo: 1
   pickUpTaskUI: {fileID: 11400000, guid: e278f311c860d4b17a34a1f436ed410a, type: 2}
   putDownTaskUI: {fileID: 11400000, guid: 2267ed46df6f64a29a73b8570198a1ae, type: 2}
-  interactionRange: 2
-  interactionDuration: 1
+  interactionRange: 10
+  interactionDuration: 0.5
+  currentState: 0
+  stoppingDistance: 1
 --- !u!1 &374885136443255813
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,7 +588,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2675527070152060701}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 56.85639, y: 0, z: 70.41398}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
