@@ -68,6 +68,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3687666390238168666}
   - component: {fileID: 9044129493704804065}
+  - component: {fileID: 6143305097573700436}
   m_Layer: 0
   m_Name: unit_components
   m_TagString: Untagged
@@ -193,6 +194,53 @@ MonoBehaviour:
       defaultValueRange:
         _min: 1
         _max: 2
+--- !u!114 &6143305097573700436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301427565534965799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd7ffc1dd7b04182845e5d735b72ead, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  code: carry
+  isActive: 1
+  tabID:
+    x: 0
+    y: 0
+  priority: 0
+  requireIdleEntity: 1
+  targetFinderData:
+    enabled: 0
+    reloadTime: 5
+    range: 10
+    idleOnly: 1
+    typePicker:
+      type: 0
+      options:
+        codes: []
+        categories: []
+      targetUnits: 1
+      targetBuildings: 1
+      targetResources: 1
+    center: {fileID: 0}
+  setTargetTaskUI: {fileID: 11400000, guid: e278f311c860d4b17a34a1f436ed410a, type: 2}
+  orderAudio:
+    fetchType: 0
+    items: []
+    cooldown:
+      enabled: 1
+      defaultValueRange:
+        _min: 1
+        _max: 2
+  showTargetGizmo: 1
+  pickUpTaskUI: {fileID: 11400000, guid: e278f311c860d4b17a34a1f436ed410a, type: 2}
+  putDownTaskUI: {fileID: 11400000, guid: 2267ed46df6f64a29a73b8570198a1ae, type: 2}
+  interactionRange: 2
+  interactionDuration: 1
 --- !u!1 &374885136443255813
 GameObject:
   m_ObjectHideFlags: 0
@@ -1221,7 +1269,7 @@ MonoBehaviour:
   isActive: 1
   tabID:
     x: 0
-    y: 1
+    y: 0
   priority: 0
   requireIdleEntity: 1
   targetFinderData:
