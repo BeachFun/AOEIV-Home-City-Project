@@ -3431,6 +3431,11 @@ MonoBehaviour:
       texture: {fileID: 0}
       hotspot: {x: 8, y: 8}
   tasksQueueKey: {fileID: 11400000, guid: b5f65bd7555e7854da132e82902b59f7, type: 2}
+--- !u!1 &365198009 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 773166446527173642, guid: bdcc1ccbb9714b444b2f1f81d4620adf, type: 3}
+  m_PrefabInstance: {fileID: 1038787388}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &367013256
 GameObject:
   m_ObjectHideFlags: 0
@@ -8327,6 +8332,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4587260759602966125, guid: bdcc1ccbb9714b444b2f1f81d4620adf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1781856702}
+    - targetCorrespondingSourceObject: {fileID: 773166446527173642, guid: bdcc1ccbb9714b444b2f1f81d4620adf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1329998201}
   m_SourcePrefab: {fileID: 100100000, guid: bdcc1ccbb9714b444b2f1f81d4620adf, type: 3}
 --- !u!1 &1052048908
 GameObject:
@@ -10686,6 +10694,45 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8055483503603288842, guid: bdcc1ccbb9714b444b2f1f81d4620adf, type: 3}
   m_PrefabInstance: {fileID: 1038787388}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1329998201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 365198009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51d1ffecc5380e24ab8b0d61ae38a1e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  code: hc_house_CarriableObjectDropoff_14
+  isActive: 1
+  targetPicker:
+    type: 1
+    options:
+      codes: []
+      categories:
+      - hc_resource_log
+    targetUnits: 1
+    targetBuildings: 1
+    targetResources: 1
+  capacity: 5
+  onObjectDroppedOff:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 137820870}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1372339794
 GameObject:
   m_ObjectHideFlags: 0

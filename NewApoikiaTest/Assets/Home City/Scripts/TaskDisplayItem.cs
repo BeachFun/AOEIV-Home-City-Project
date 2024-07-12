@@ -19,3 +19,4 @@ public class TaskDisplayItem : MonoBehaviour
 
     //TODO: Accomodate Icons
 }
+ 
