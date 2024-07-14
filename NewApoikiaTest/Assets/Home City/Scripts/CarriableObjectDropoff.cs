@@ -28,25 +28,28 @@ namespace RTSEngine.Custom
 		public event CustomEventHandler<ICarriableObjectDropoff, CarriableObjectEventArgs> ObjectDroppedOff;
 
 
-		public ErrorMessage CanDropOff(IEntity carriableObject)
+		public ErrorMessage CanDropOff(CarriableObject carriableObject)
 		{
 			if (!carriableObject.IsValid())
 				return ErrorMessage.invalid;
-			else if (!carriableObject.IsInteractable)
+			else if (!carriableObject.Entity.IsInteractable)
 				return ErrorMessage.uninteractable;
 			else if (CurrAmount >= MaxAmount)
 				return ErrorMessage.dropOffMaxCapacityReached;
-			else if (!targetPicker.IsValidTarget(carriableObject))
+			else if (!targetPicker.IsValidTarget(carriableObject.Entity))
 				return ErrorMessage.targetPickerUndefined;
 
 			return ErrorMessage.none;
 		}
 
-		public ErrorMessage DropOff(IEntity carriableObject)
+		public ErrorMessage DropOff(CarriableObject carriableObject)
 		{
+			Debug.Log("DROP OFF: " + carriableObject.gameObject.name);
+
 			ErrorMessage errorMsg = CanDropOff(carriableObject);
 			if (errorMsg != ErrorMessage.none)
 				return errorMsg;
+
 
 			CurrAmount++;
 
@@ -61,11 +64,11 @@ namespace RTSEngine.Custom
 
 		private void RaiseObjectDroppedOff(CarriableObjectEventArgs args)
 		{
+			Debug.Log("EVENT DROPPED OFF: " + args.CarriableObject.gameObject.name);
+
 			var handler = ObjectDroppedOff;
 			handler?.Invoke(this, args);
 		}
-
-
 
 
 

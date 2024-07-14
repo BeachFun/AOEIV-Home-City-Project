@@ -291,7 +291,22 @@ namespace RTSEngine.Custom
        {
            if (carriedObject != null)
            {
-               carriedObject.OnPutDown();
+                // Call DropOff method on the target if it's a CarriableObjectDropoff
+                Debug.Log("CARRIED OBJECT: " + carriedObject.name);
+                ICarriableObjectDropoff dropoff = Target.instance.gameObject?.GetComponent<ICarriableObjectDropoff>();
+                if (dropoff != null)
+                {
+                    ErrorMessage dropoffError = dropoff.DropOff(carriedObject);
+                    if (dropoffError != ErrorMessage.none)
+                    {
+                        Debug.LogError($"[Carrier] Failed to drop off object: {dropoffError}");
+                        // Handle the error (maybe return to Carrying state?)
+                        return;
+                    }
+                }
+
+
+                carriedObject.OnPutDown();
                carriedObject.transform.SetParent(null);
                carriedObject.transform.position = Target.position;
                carriedObject = null;

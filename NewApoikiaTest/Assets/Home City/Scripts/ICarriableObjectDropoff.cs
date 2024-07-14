@@ -12,17 +12,17 @@ namespace RTSEngine.Custom
 		int CurrAmount { get; }
 		bool HasMaxAmount { get; }
 
-		ErrorMessage CanDropOff(IEntity carriableObject);
-		ErrorMessage DropOff(IEntity carriableObject);
+		ErrorMessage CanDropOff(CarriableObject carriableObject);
+		ErrorMessage DropOff(CarriableObject carriableObject);
 
 		event CustomEventHandler<ICarriableObjectDropoff, CarriableObjectEventArgs> ObjectDroppedOff;
 	}
 
 	public class CarriableObjectEventArgs : EventArgs
 	{
-		public IEntity CarriableObject { get; }
+		public CarriableObject CarriableObject { get; }
 
-		public CarriableObjectEventArgs(IEntity carriableObject)
+		public CarriableObjectEventArgs(CarriableObject carriableObject)
 		{
 			CarriableObject = carriableObject;
 		}
