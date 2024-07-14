@@ -20,6 +20,8 @@ namespace RTSEngine.Entities
     {
         #region Class Attributes
         public IFactionManager FactionMgr { private set; get; }
+        [SerializeField, Tooltip("Main entities are entities that need to be destroyed to eliminate the faction when the defeat condition is set to 'Eliminate Main'")]
+        private bool TEST = false;
 
         [SerializeField, Tooltip("Main entities are entities that need to be destroyed to eliminate the faction when the defeat condition is set to 'Eliminate Main'")]
         private bool isMainEntity = false;

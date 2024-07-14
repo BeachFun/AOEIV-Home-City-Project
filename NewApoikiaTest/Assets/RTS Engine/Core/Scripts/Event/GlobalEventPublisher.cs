@@ -602,5 +602,15 @@ namespace RTSEngine.Event
             handler?.Invoke(sender, args);
         }
         #endregion
+
+        #region Building Inventory
+        public event CustomEventHandler<IBuilding, InventoryFullEventArgs> BuildingInventoryFull;
+
+        public void RaiseBuildingInventoryFull(IBuilding building)
+        {
+            var handler = BuildingInventoryFull;
+            handler?.Invoke(building, new InventoryFullEventArgs(building));
+        }
+        #endregion
     }
 }

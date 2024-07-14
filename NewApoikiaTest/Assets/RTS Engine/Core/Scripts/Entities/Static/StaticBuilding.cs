@@ -131,6 +131,12 @@ namespace RTSEngine.Entities.Static
         public IEnumerable<IResourceGenerator> ResourceGenerators => null;
 
         public IReadOnlyList<IPendingTaskEntityComponent> PendingTaskEntityComponents => null;
+
+        private bool canConstruct { get { return !requiresResourcesToConstruct; } set { canConstruct = value; } }
+        public bool CanConstruct => canConstruct;
+        [SerializeField]
+        private bool requiresResourcesToConstruct = false;
+
         #endregion
 
         #region Raising Events

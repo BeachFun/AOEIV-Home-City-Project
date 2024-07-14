@@ -104,6 +104,9 @@ namespace RTSEngine.Event
         event CustomEventHandler<IResourceGenerator, EventArgs> ResourceGeneratorInitGlobal;
         event CustomEventHandler<IAttackObject, AttackObjectTargetEventArgs> AttackObjectApplyDamageGlobal;
 
+        event CustomEventHandler<IBuilding, InventoryFullEventArgs> BuildingInventoryFull;
+
+
         void RaiseAttackSwitchCompleteGlobal(IAttackComponent sender);
         void RaiseAttackSwitchStartGlobal(IAttackComponent sender);
         void RaiseBorderActivatedGlobal(IBorder sender);
@@ -171,5 +174,8 @@ namespace RTSEngine.Event
         void RaiseUnitSquadDeselectedGlobal(IUnitSquad sender, EventArgs args);
         void RaiseResourceGeneratorInitGlobal(IResourceGenerator sender);
         void RaiseAttackObjectApplyDamageGlobal(IAttackObject sender, AttackObjectTargetEventArgs args);
+
+        void RaiseBuildingInventoryFull(IBuilding building);
+
     }
 }

@@ -8,6 +8,7 @@ using RTSEngine.Event;
 using RTSEngine.Game;
 using RTSEngine.Health;
 using RTSEngine.Selection;
+using RTSEngine.Custom;
 
 namespace RTSEngine.Entities
 {
@@ -36,6 +37,10 @@ namespace RTSEngine.Entities
 
         public new IBuildingHealth Health { private set; get; }
         public new IBuildingWorkerManager WorkerMgr { private set; get; }
+
+        private bool canConstruct = false;
+        public bool CanConstruct => canConstruct;
+
         #endregion
 
         #region Raising Events
@@ -61,7 +66,11 @@ namespace RTSEngine.Entities
             this.CurrentCenter = BorderComponent.IsValid() ? BorderComponent : initParams.buildingCenter;
 
             if (!IsPlacementInstance)
+            {
                 Place(completeConstruction: initParams.isBuilt, initParams.playerCommand);
+            }
+
+            globalEvent.BuildingInventoryFull += HandleInventoryFull;
         }
 
         protected override void FetchComponents()
@@ -122,7 +131,10 @@ namespace RTSEngine.Entities
             OnDisabled(isUpgrade, isFactionUpdate);
         }
 
-        protected virtual void OnDisabled(bool isUpgrade, bool isFactionUpdate) { }
+        protected virtual void OnDisabled(bool isUpgrade, bool isFactionUpdate)
+        {
+            globalEvent.BuildingInventoryFull -= HandleInventoryFull;
+        }
         #endregion
 
         #region Handling Events: Building Health
@@ -251,6 +263,18 @@ namespace RTSEngine.Entities
             {
                 BorderComponent.Init(gameMgr, this);
                 CurrentCenter = BorderComponent;
+            }
+        }
+
+        private CarriableObjectDropoff carriableObjectDropoff;
+        private void HandleInventoryFull(IBuilding sender, InventoryFullEventArgs args)
+        {
+            if (sender == this)
+            {
+                canConstruct = true;
+                // If the building is already at full health, trigger construction completion
+                if (Health.HasMaxHealth)
+                    CompleteConstruction();
             }
         }
 

@@ -11,13 +11,14 @@ using UnityEngine.Events;
 
 namespace RTSEngine.Custom
 {
+
 	public class CarriableObjectDropoff : EntityComponentBase, ICarriableObjectDropoff
 	{
 		[SerializeField, Tooltip("Define the carriable objects that can be dropped off.")]
 		private EntityTargetPicker targetPicker = new EntityTargetPicker();
 
 		[SerializeField, Tooltip("The maximum amount of carriable objects that can be dropped off at the same time.")]
-		private int capacity = 5;
+		private int capacity = 2;
 		public int MaxAmount => capacity;
 		public int CurrAmount { private set; get; }
 		public bool HasMaxAmount => CurrAmount >= MaxAmount;
@@ -26,6 +27,9 @@ namespace RTSEngine.Custom
 		private UnityEngine.Events.UnityEvent onObjectDroppedOff = new UnityEngine.Events.UnityEvent();
 
 		public event CustomEventHandler<ICarriableObjectDropoff, CarriableObjectEventArgs> ObjectDroppedOff;
+
+		private IGlobalEventPublisher globalEvent;
+		private IBuilding building;
 
 
 		public ErrorMessage CanDropOff(CarriableObject carriableObject)
@@ -45,6 +49,16 @@ namespace RTSEngine.Custom
 		public ErrorMessage DropOff(CarriableObject carriableObject)
 		{
 			Debug.Log("DROP OFF: " + carriableObject.gameObject.name);
+			if (globalEvent == null)
+            {
+				this.globalEvent = gameMgr.GetService<IGlobalEventPublisher>();
+			}
+			if (building == null)
+            {
+				this.building = Entity as IBuilding;
+			}
+
+
 
 			ErrorMessage errorMsg = CanDropOff(carriableObject);
 			if (errorMsg != ErrorMessage.none)
@@ -68,12 +82,27 @@ namespace RTSEngine.Custom
 
 			var handler = ObjectDroppedOff;
 			handler?.Invoke(this, args);
+
+			RaiseInventoryFullEvent();
+		}
+
+		
+
+
+		//Hack Inventory system
+
+		private void RaiseInventoryFullEvent()
+		{
+			if (HasMaxAmount)
+            {
+				Debug.Log("CAPACITY REACHED! ====");
+				globalEvent.RaiseBuildingInventoryFull(building);
+			}
 		}
 
 
 
-
-    }
+	}
 }
 
 /*

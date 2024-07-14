@@ -680,7 +680,6 @@ GameObject:
   - component: {fileID: 3718602448506647641}
   - component: {fileID: 9025378955919294649}
   - component: {fileID: 7828218993568700995}
-  - component: {fileID: 1228949662919318867}
   - component: {fileID: 1117682240503008773}
   m_Layer: 0
   m_Name: hc_house
@@ -732,6 +731,7 @@ MonoBehaviour:
   radius: 2.5
   model: {fileID: 1168471589904872687}
   isIdle: 0
+  TEST: 0
   isMainEntity: 0
   isFactionLocked: 0
   initResources: []
@@ -761,7 +761,7 @@ MonoBehaviour:
     x: 0
     y: 0
   maxHealth: 100
-  initialHealth: 100
+  initialHealth: 1
   canIncrease: 1
   canDecrease: 1
   hoverHealthBarData:
@@ -1027,20 +1027,6 @@ MonoBehaviour:
     colorPropertyName: _Color
     transparency: 0
     darkness: 0
---- !u!114 &1228949662919318867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4587260759602966125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57ac260402df54801978c8dacebf26fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  code: hc_house_CarriableObject_223
-  isActive: 1
 --- !u!114 &1117682240503008773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1064,7 +1050,7 @@ MonoBehaviour:
     targetUnits: 1
     targetBuildings: 1
     targetResources: 1
-  capacity: 5
+  capacity: 2
   onObjectDroppedOff:
     m_PersistentCalls:
       m_Calls:

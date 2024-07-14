@@ -293,7 +293,7 @@ namespace RTSEngine.Custom
            {
                 // Call DropOff method on the target if it's a CarriableObjectDropoff
                 Debug.Log("CARRIED OBJECT: " + carriedObject.name);
-                ICarriableObjectDropoff dropoff = Target.instance.gameObject?.GetComponent<ICarriableObjectDropoff>();
+                ICarriableObjectDropoff dropoff = Target.instance?.gameObject.GetComponent<ICarriableObjectDropoff>();
                 if (dropoff != null)
                 {
                     ErrorMessage dropoffError = dropoff.DropOff(carriedObject);

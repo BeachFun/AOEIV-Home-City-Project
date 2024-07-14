@@ -25,5 +25,7 @@ namespace RTSEngine.Entities
 
         void Init(IGameManager gameMgr, InitBuildingParameters initParams);
         void InitPlacementInstance(IGameManager gameMgr, InitBuildingParameters initParams);
+
+        bool CanConstruct { get; }
     }
 }

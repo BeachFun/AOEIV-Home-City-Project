@@ -203,6 +203,12 @@ namespace RTSEngine.EntityComponent
                 return ErrorMessage.targetOutOfRange;
             else if (Target.instance != potentialTarget.instance && potentialTarget.instance.WorkerMgr.HasMaxAmount)
                 return ErrorMessage.workersMaxAmountReached;
+            else if (!potentialTarget.instance.CanConstruct)
+            {
+                Debug.Log("CANNOT CONSTRUCT +++");
+                return ErrorMessage.invalid;
+            }
+
 
             // Repair Costs check
             if (potentialTarget.instance.IsBuilt)
