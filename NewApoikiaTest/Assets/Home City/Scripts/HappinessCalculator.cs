@@ -4,6 +4,9 @@ using RTSEngine.Game;
 using System;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Networking;
+using System.Collections;
+using System.IO;
 
 public class HappinessCalculator : MonoBehaviour
 {
@@ -24,6 +27,10 @@ public class HappinessCalculator : MonoBehaviour
     private IGameManager gameMgr;
     private IResourceManager resourceMgr;
 
+    private const float AOEFetchInterval = 600f; // 10 minutes in seconds
+
+    private string linkedUsername = "Chilly5";
+
     void Start()
     {
         this.gameMgr = FindObjectOfType<GameManager>();
@@ -32,6 +39,9 @@ public class HappinessCalculator : MonoBehaviour
         SetResource(0, "happiness", 100, 100);
         previousHomelessness = 5; // Initial value to match the SetResource call in Start
         timeSinceLastDecrease = 0f; // Initialize timer
+
+        // Test out API call
+        InvokeRepeating("StartAoEUserRequest", 0f, AOEFetchInterval);
     }
 
     void Update()
@@ -128,5 +138,143 @@ public class HappinessCalculator : MonoBehaviour
                 timeSinceLastDecrease = 0f;
             }
         }
+    }
+
+    // Start the coroutine to hit the URL
+    public void StartAoEUserRequest()
+    {
+        StartCoroutine(GetRequest(linkedUsername));
+    }
+
+    // Coroutine to handle the web request
+    IEnumerator GetRequest(string username)
+    {
+        string url = $"https://fernandodm.com.br/aoe4-city-builder/players/{username}/init";
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            // Request and wait for the desired page.
+            yield return webRequest.SendWebRequest();
+
+            // Check for errors
+            if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogError("Error: " + webRequest.error);
+            }
+            else
+            {
+                // Get the response text
+                string jsonResponse = webRequest.downloadHandler.text;
+                Debug.Log("Response: " + jsonResponse);
+
+                // Current number of wins
+                int currentTotalWins;
+                ParseJsonResponse(jsonResponse, out currentTotalWins);
+
+                // Path to the user's file
+                string path = Path.Combine(Application.persistentDataPath, $"{username}_data.json");
+
+                // Check if a file exists for this user
+                if (File.Exists(path))
+                {
+                    // Read the existing JSON from the file
+                    string previousJsonResponse = File.ReadAllText(path);
+
+                    // Parse the previous JSON response
+                    int previousTotalWins;
+                    ParseJsonResponse(previousJsonResponse, out previousTotalWins);
+
+                    // Compare the previous total win count with the current one
+                    if (previousTotalWins < currentTotalWins)
+                    {
+                        // Give the user X number of villagers (add your logic here)
+                        Debug.Log("Villagers to Give");
+                        int villagersToGive = currentTotalWins - previousTotalWins;
+                        Debug.Log(villagersToGive);
+                    }
+                }
+
+                // Save the JSON response to a local file
+                SaveJsonToFile(username, jsonResponse);
+            }
+        }
+    }
+
+    // Method to save JSON to a local file
+    void SaveJsonToFile(string username, string jsonResponse)
+    {
+        string path = Path.Combine(Application.persistentDataPath, $"{username}_data.json");
+
+        try
+        {
+            File.WriteAllText(path, jsonResponse);
+            Debug.Log($"JSON saved to: {path}");
+        }
+        catch (IOException e)
+        {
+            Debug.LogError("Error saving JSON to file: " + e.Message);
+        }
+    }
+
+    // Method to parse the JSON response
+    void ParseJsonResponse(string jsonResponse, out int totalWins)
+    {
+        PlayerData playerData = JsonUtility.FromJson<PlayerData>(jsonResponse);
+        totalWins = playerData.stats.totalWins;
+        Debug.Log("Total Wins: " + totalWins);
+    }
+
+
+    // JSON parsing classes
+    [System.Serializable]
+    public class PlayerData
+    {
+        public Profile profile;
+        public Stats stats;
+        public ModeStats modeStats;
+        public string last_updated;
+    }
+
+    [System.Serializable]
+    public class Profile
+    {
+        public int id;
+        public string name;
+        public string country;
+        public Avatars avatars;
+    }
+
+    [System.Serializable]
+    public class Avatars
+    {
+        // Add fields for avatars if needed
+    }
+
+    [System.Serializable]
+    public class Stats
+    {
+        public int totalWins;
+    }
+
+    [System.Serializable]
+    public class ModeStats
+    {
+        public GameMode rm_team;
+        public GameMode rm_solo;
+        public GameMode rm_1v1_elo;
+        public GameMode rm_2v2_elo;
+        public GameMode rm_3v3_elo;
+        public GameMode rm_4v4_elo;
+        public GameMode qm_1v1;
+        public GameMode qm_2v2;
+        public GameMode qm_3v3;
+        public GameMode qm_4v4;
+        public GameMode rm_1v1;
+    }
+
+    [System.Serializable]
+    public class GameMode
+    {
+        public int gamesCount;
+        public int winsCount;
     }
 }
