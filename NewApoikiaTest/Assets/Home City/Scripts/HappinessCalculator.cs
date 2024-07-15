@@ -10,10 +10,16 @@ public class HappinessCalculator : MonoBehaviour
     [SerializeField, Tooltip("Reference to the resource manager to update the happiness resource.")]
     private ResourceManager resourceManager;
 
+    private int maxHomeslessness = 100;
+    private int minHomelessness = 0;
+    private int currentHomelessness;
+    private int previousHomelessness;
+
     private int maxHappiness = 100;
     private int minHappiness = 0;
-    private int currentHappiness;
-    private int previousHappiness;
+    private int currentHappiness = 100;
+    private float happinessDecreaseInterval = 10f; // Time in seconds to decrease happiness
+    private float timeSinceLastDecrease;
 
     private IGameManager gameMgr;
     private IResourceManager resourceMgr;
@@ -22,8 +28,10 @@ public class HappinessCalculator : MonoBehaviour
     {
         this.gameMgr = FindObjectOfType<GameManager>();
         this.resourceMgr = gameMgr.GetService<IResourceManager>();
-        SetResource(0, "happiness", 5, 100);
-        previousHappiness = 5; // Initial value to match the SetResource call in Start
+        SetResource(0, "homelessness", 5, 100);
+        SetResource(0, "happiness", 100, 100);
+        previousHomelessness = 5; // Initial value to match the SetResource call in Start
+        timeSinceLastDecrease = 0f; // Initialize timer
     }
 
     void Update()
@@ -31,8 +39,15 @@ public class HappinessCalculator : MonoBehaviour
         // Here, you should implement how you update numberOfPeople and numberOfHomes,
         // maybe through other scripts or events in your game. For now, let's assume
         // they are updated elsewhere and we're just using the values here.
-
-        UpdateHappiness();
+        if (currentHappiness == 0)
+        {
+            gameMgr.OnFactionDefeatedLocal(0);
+        }
+        else
+        {
+            UpdateHomelessness();
+            UpdateHappiness();
+        }
     }
 
     static void PrintAllAttributes(object obj)
@@ -68,13 +83,13 @@ public class HappinessCalculator : MonoBehaviour
         ResourceTypeInfo resourceType;
         int amount;
         int capacity;
-        GetResource(0, "happiness", out amount, out capacity, out resourceType);
+        GetResource(0, resourceKey, out amount, out capacity, out resourceType);
         ResourceTypeValue typeValue = new ResourceTypeValue { amount = amount1, capacity = capacity1 };
         IFactionResourceHandler resourceHandler = resourceMgr.FactionResources[factionID].ResourceHandlers[resourceType];
         resourceHandler.SetAmount(typeValue, out _);
     }
 
-    private void UpdateHappiness()
+    private void UpdateHomelessness()
     {
         int amount;
         int capacity;
@@ -84,20 +99,34 @@ public class HappinessCalculator : MonoBehaviour
 
         if (amount <= capacity)
         {
-            currentHappiness = maxHappiness;
+            currentHomelessness = maxHomeslessness;
         }
         else
         {
             float temp = amount - capacity;
             temp = temp / amount;
             float percentage = 1 - temp;
-            currentHappiness = Mathf.Clamp((int)(maxHappiness * percentage), minHappiness, maxHappiness);
+            currentHomelessness = Mathf.Clamp((int)(maxHomeslessness * percentage), minHomelessness, maxHomeslessness);
         }
 
-        if (currentHappiness != previousHappiness)
+        if (currentHomelessness != previousHomelessness)
         {
-            SetResource(0, "happiness", currentHappiness, 100);
-            previousHappiness = currentHappiness;
+            SetResource(0, "homelessness", currentHomelessness, 100);
+            previousHomelessness = currentHomelessness;
+        }
+    }
+    private void UpdateHappiness()
+    {
+        if (currentHomelessness < maxHomeslessness)
+        {
+            timeSinceLastDecrease += Time.deltaTime;
+
+            if (timeSinceLastDecrease >= happinessDecreaseInterval)
+            {
+                currentHappiness = Mathf.Clamp(currentHappiness - 5, minHappiness, maxHappiness);
+                SetResource(0, "happiness", currentHappiness, 100);
+                timeSinceLastDecrease = 0f;
+            }
         }
     }
 }
