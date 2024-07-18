@@ -722,7 +722,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tabID:
     x: 0
-    y: 2
+    y: 1
   _name: House
   code: hc_house
   category: hc_house
@@ -734,7 +734,12 @@ MonoBehaviour:
   TEST: 0
   isMainEntity: 0
   isFactionLocked: 0
-  initResources: []
+  initResources:
+  - type: {fileID: 11400000, guid: b16294d219bf6db449279be57eae3702, type: 2}
+    value:
+      amount: 0
+      capacity: 1
+    nonConsumable: 0
   disableResources: []
   coloredRenderers:
   - renderer: {fileID: 1487659306932572830}
