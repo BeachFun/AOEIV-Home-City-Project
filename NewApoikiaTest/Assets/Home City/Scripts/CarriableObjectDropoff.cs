@@ -20,7 +20,7 @@ namespace RTSEngine.Custom
 		[SerializeField, Tooltip("The maximum amount of carriable objects that can be dropped off at the same time.")]
 		private int capacity = 2;
 		public int MaxAmount => capacity;
-		public int CurrAmount { private set; get; }
+		public int CurrAmount { get { return carriedObjects.Count; } }
 		public bool HasMaxAmount => CurrAmount >= MaxAmount;
 
 		[SerializeField, Tooltip("What action to perform when an object is dropped off?")]
@@ -30,6 +30,8 @@ namespace RTSEngine.Custom
 
 		private IGlobalEventPublisher globalEvent;
 		private IBuilding building;
+
+		private List<CarriableObject> carriedObjects = new List<CarriableObject>();
 
 
 		public ErrorMessage CanDropOff(CarriableObject carriableObject)
@@ -58,14 +60,11 @@ namespace RTSEngine.Custom
 				this.building = Entity as IBuilding;
 			}
 
-
-
 			ErrorMessage errorMsg = CanDropOff(carriableObject);
 			if (errorMsg != ErrorMessage.none)
 				return errorMsg;
 
-
-			CurrAmount++;
+			carriedObjects.Add(carriableObject);
 
 			// Perform the dropoff action
 			onObjectDroppedOff.Invoke();

@@ -260,7 +260,7 @@ namespace RTSEngine.Task
             if (!Entity.EntityTargetComponents[nextInput.componentCode].IsTargetValid(nextInput, out ErrorMessage errorMessage))
             {
                 Debug.Log("!!!TryLaunchNext: " + 3);
-
+                queue.RemoveAt(0);
                 return false;
 			}
 

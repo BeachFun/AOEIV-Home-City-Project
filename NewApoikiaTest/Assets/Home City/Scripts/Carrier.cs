@@ -378,15 +378,15 @@ namespace RTSEngine.Custom
 
             if (!IsCarrying)
            {
-               // When not carrying, we're looking for an entity with a CarriableObject component
-               if (!input.target.instance.IsValid())
+                // When not carrying, we're looking for an entity with a CarriableObject component
+                if (!input.target.instance.IsValid())
                {
                    Debug.Log($"[Carrier] IsTargetValid called. IsCarrying: {IsCarrying}, Target: {input.target.instance}" + ", !input.target.instance.IsValid(): " + !input.target.instance.IsValid());
                     Debug.Log("!!!IsTargetValid test: " + 1);
 
                     return ErrorMessage.invalid;
                }
-               if (input.target.instance.GetComponent<CarriableObject>() == null)
+                if (input.target.instance.GetComponent<CarriableObject>() == null)
                {
                    Debug.Log($"[Carrier] IsTargetValid called. IsCarrying: {IsCarrying}, Target: {input.target.instance}" + ", input.target.instance.GetComponent<CarriableObject>() == null: " + input.target.instance.GetComponent<CarriableObject>() == null);
                     Debug.Log("!!!IsTargetValid test: " + 2);
