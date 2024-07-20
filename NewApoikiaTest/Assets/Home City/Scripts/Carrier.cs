@@ -374,7 +374,7 @@ namespace RTSEngine.Custom
        public override ErrorMessage IsTargetValid(SetTargetInputData input)
        {
            Debug.Log("!!!IsTargetValid: " + input.target);
-            return ErrorMessage.invalid;
+           // return ErrorMessage.invalid;
 
             if (!IsCarrying)
            {
