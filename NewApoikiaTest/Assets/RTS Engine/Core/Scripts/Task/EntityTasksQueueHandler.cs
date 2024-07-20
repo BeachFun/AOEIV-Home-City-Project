@@ -83,6 +83,8 @@ namespace RTSEngine.Task
 
                 RunningQueueTaskCompCode = args.TargetComp.Code;
                 (args.TargetComp as IEntityTargetComponent).TargetStop += HandleComponentTargetStop;
+                Debug.Log("!!!HandleComponentTargetStop2");
+
             }
 
             int i = 0;
@@ -108,7 +110,10 @@ namespace RTSEngine.Task
             while (queue.Count > 0)
             {
                 if (TryLaunchNext())
+                {
+                    Debug.Log("!!! This is happening");
                     return;
+                }
             }
 
             if (queue.Count == 0)
@@ -119,6 +124,7 @@ namespace RTSEngine.Task
 		#region Launching Actions
 		public override ErrorMessage LaunchActionLocal(byte actionID, SetTargetInputData input)
         {
+            Debug.Log("!!!LaunchActionLocal: " + (TasksQueueActionType)actionID);
             switch ((TasksQueueActionType)actionID)
             {
                 case TasksQueueActionType.addAndLaunchOnEmpty:
@@ -142,9 +148,6 @@ namespace RTSEngine.Task
         #region Adding Tasks
         public bool CanAdd(SetTargetInputData input)
         {
-            if (Entity.IsLocalPlayerFaction())
-                Debug.Log("CAN ADD: " + input.componentCode + ", IsActive: " + IsActive + ", input.playerCommand: " + input.playerCommand + ", !input.fromTasksQueue: " + !input.fromTasksQueue + ", Entity.IsLocalPlayerFaction(): " + Entity.IsLocalPlayerFaction() + ", taskMgr.IsTaskQueueEnabled: " + taskMgr.IsTaskQueueEnabled);
-
             if (IsActive
                 && input.playerCommand
                 && !input.fromTasksQueue
@@ -160,11 +163,8 @@ namespace RTSEngine.Task
                 && Entity.IsLocalPlayerFaction()
                 && !taskMgr.IsTaskQueueEnabled)
             {
-				Debug.Log("SECOND " + ", IsRunningQueueTask: " + IsRunningQueueTask + ", !string.IsNullOrEmpty(RunningQueueTaskCompCode): " + !string.IsNullOrEmpty(RunningQueueTaskCompCode));
-
 				if (IsRunningQueueTask && !string.IsNullOrEmpty(RunningQueueTaskCompCode))
                 {
-                    Debug.Log("ATTEMPT TO STOP");
 					if (!input.fromTasksQueue)
 					{
 						Clear();
@@ -178,11 +178,6 @@ namespace RTSEngine.Task
             {
                 if (!input.fromTasksQueue)
                 {
-					if (Entity.IsLocalPlayerFaction())
-                    {
-						Debug.Log("ATTEMPT TO CLEAR");
-					}
-
 					Clear();
 				}
 				return false;
@@ -193,8 +188,6 @@ namespace RTSEngine.Task
 		{
 			if (Entity.EntityTargetComponents.TryGetValue(RunningQueueTaskCompCode, out IEntityTargetComponent component))
 			{
-				Debug.Log("STOPPING");
-
 				component.Stop();
 			}
 		}
@@ -204,16 +197,14 @@ namespace RTSEngine.Task
 
         private ErrorMessage AddLocal(SetTargetInputData input, bool launchOnEmpty = true)
         {
-
+            Debug.Log("!!!AddLocal, SetTargetInputData: " + input + ", launchOnEmpty: " + launchOnEmpty);
 			input.fromTasksQueue = true;
             queue.Add(input);
-			Debug.Log("ADD LOCAL: " + input.componentCode + ", launchonempty: " + launchOnEmpty + ", queue count: " + queue.Count);
 
 			bool canStopCollectingResource = resourceCollector.IsValid() && resourceCollector.HasTarget && excludeResourceCollectionInKeepActiveTask;
 
             if (launchOnEmpty && (!IsRunningQueueTask || canStopCollectingResource) && queue.Count == 1)
             {
-                Debug.Log("add local 2");
                 IEntityTargetComponent activeTargetComponent = Entity
                     .EntityTargetComponents
                     .Values
@@ -223,15 +214,14 @@ namespace RTSEngine.Task
                 // Then launch the newly added task to the empty queue directly
                 if (!activeTargetComponent.IsValid() || !keepActiveTask || canStopCollectingResource || Entity.IsIdle)
                 {
-					TryLaunchNext(directLaunch: true);
-					Debug.Log("add local 3");
 
+                    TryLaunchNext(directLaunch: true);
 				}
 				else
                 {
-                    SetRunningComponent(activeTargetComponent.Code, force: true);
-					Debug.Log("add local 4");
+                    Debug.Log("!!!SetRunningComponent");
 
+                    SetRunningComponent(activeTargetComponent.Code, force: true);
 				}
 			}
 
@@ -240,22 +230,25 @@ namespace RTSEngine.Task
 
         private bool TryLaunchNext(bool directLaunch = false)
         {
+            Debug.Log("!!!TryLaunchNext: " + directLaunch);
+
             if (queue.Count == 0)
             {
-				Debug.Log("TryLaunchNext1");
-				return false;
+                Debug.Log("!!!TryLaunchNext: " + 1);
+
+                return false;
 			}
 
 			if (!directLaunch)
             {
-				Debug.Log("TryLaunchNext2");
 				queue.RemoveAt(0);
 			}
 
             if (queue.Count == 0)
             {
-				Debug.Log("TryLaunchNext3");
-				return false;
+                Debug.Log("!!!TryLaunchNext: " + 2);
+
+                return false;
             }
 
 			SetTargetInputData nextInput = queue[0];
@@ -266,16 +259,15 @@ namespace RTSEngine.Task
 
             if (!Entity.EntityTargetComponents[nextInput.componentCode].IsTargetValid(nextInput, out ErrorMessage errorMessage))
             {
-				Debug.Log("TryLaunchNext4");
-				return false;
+                Debug.Log("!!!TryLaunchNext: " + 3);
+
+                return false;
 			}
 
 			if ((nextInput.playerCommand && Entity.HasAuthority()) || (!nextInput.playerCommand && RTSHelper.IsMasterInstance()))
             {
-				Debug.Log("TryLaunchNext5");
 				Entity.EntityTargetComponents[nextInput.componentCode].SetTarget(nextInput);
 			}
-			Debug.Log("TryLaunchNext6");
 
 			SetRunningComponent(nextInput.componentCode, force: true);
 
@@ -284,16 +276,19 @@ namespace RTSEngine.Task
 
         private ErrorMessage SetRunningComponent(string componentCode, bool force = false)
         {
+            Debug.Log("!!!SetRunningComponent: " + componentCode + ", force: " + force);
+
             if (IsRunningQueueTask && !force)
             {
 				return ErrorMessage.invalid;
 			}
+            Debug.Log("!!!HandleComponentTargetStop");
 
-			Entity.EntityTargetComponents[componentCode].TargetStop += HandleComponentTargetStop;
+            Entity.EntityTargetComponents[componentCode].TargetStop += HandleComponentTargetStop;
             RunningQueueTaskCompCode = componentCode;
 
             IsRunningQueueTask = true;
-			Debug.Log("SetRunningComponent");
+			Debug.Log("!!!SetRunningComponent ");
 
 			return ErrorMessage.none;
         }

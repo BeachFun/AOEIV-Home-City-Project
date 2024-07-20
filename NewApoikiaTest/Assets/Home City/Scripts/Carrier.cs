@@ -373,41 +373,59 @@ namespace RTSEngine.Custom
 
        public override ErrorMessage IsTargetValid(SetTargetInputData input)
        {
-           Debug.Log("IsTargetValid: " + input.ToString());
-           if (!IsCarrying)
+           Debug.Log("!!!IsTargetValid: " + input.target);
+            return ErrorMessage.invalid;
+
+            if (!IsCarrying)
            {
                // When not carrying, we're looking for an entity with a CarriableObject component
                if (!input.target.instance.IsValid())
                {
                    Debug.Log($"[Carrier] IsTargetValid called. IsCarrying: {IsCarrying}, Target: {input.target.instance}" + ", !input.target.instance.IsValid(): " + !input.target.instance.IsValid());
-                   return ErrorMessage.invalid;
+                    Debug.Log("!!!IsTargetValid test: " + 1);
+
+                    return ErrorMessage.invalid;
                }
                if (input.target.instance.GetComponent<CarriableObject>() == null)
                {
                    Debug.Log($"[Carrier] IsTargetValid called. IsCarrying: {IsCarrying}, Target: {input.target.instance}" + ", input.target.instance.GetComponent<CarriableObject>() == null: " + input.target.instance.GetComponent<CarriableObject>() == null);
-                   return ErrorMessage.invalid;
+                    Debug.Log("!!!IsTargetValid test: " + 2);
+
+                    return ErrorMessage.invalid;
                }
                if (!input.target.instance.IsInteractable)
                {
                    Debug.Log($"[Carrier] IsTargetValid called. IsCarrying: {IsCarrying}, Target: {input.target.instance}" + ", !input.target.instance.IsInteractable: " + !input.target.instance.IsInteractable);
-                   return ErrorMessage.uninteractable;
+                    Debug.Log("!!!IsTargetValid test: " + 3);
+
+                    return ErrorMessage.uninteractable;
                }
-           }
-           else
+                Debug.Log("!!!IsTargetValid test: " + 4);
+
+            }
+            else
            {
                // When carrying, we're looking for a valid position to put down the object
                if (!IsValidPosition(input.target.position))
-                   return ErrorMessage.invalid;
-           }
+                {
+                    Debug.Log("!!!IsTargetValid IsValidPosition: " + ErrorMessage.invalid);
+                    return ErrorMessage.invalid;
+                }
+                Debug.Log("!!!IsTargetValid test: " + 5);
 
-           // Check if the target is within range
-           if (!IsTargetInRange(Entity.transform.position, input.target))
+            }
+
+            // Check if the target is within range
+            if (!IsTargetInRange(Entity.transform.position, input.target))
            {
                Debug.Log("!IsTargetInRange(Entity.transform.position, input.target)");
-               //return ErrorMessage.targetOutOfRange;
-           }
+                Debug.Log("!!!IsTargetValid test: " + 6);
 
-           return ErrorMessage.none;
+                //return ErrorMessage.targetOutOfRange;
+            }
+            Debug.Log("!!!IsTargetValid error message: " + ErrorMessage.none);
+
+            return ErrorMessage.none;
        }
 
        private bool IsValidPosition(Vector3 position)

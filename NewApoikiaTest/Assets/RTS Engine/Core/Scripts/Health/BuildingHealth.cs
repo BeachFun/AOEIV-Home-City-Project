@@ -139,14 +139,12 @@ namespace RTSEngine.Health
 
         private void Update()
         {
-            Debug.Log("building CAN CONSTRUCT === " + building.CanConstruct);
             if (!RTSHelper.IsMasterInstance()
                 || Building.WorkerMgr.Amount == 0
                 || !hasBuildersInProgress
                 || buildingMgr.ConstructionType != ConstructionType.time
                 || !building.CanConstruct)
                 return;
-            Debug.Log("ADDING HEALTH === " + building.CanConstruct);
 
             if (buildTimer.ModifiedDecrease())
                 Add(new HealthUpdateArgs(value: MaxHealth, source: Building.WorkerMgr.Workers[0]));
@@ -173,7 +171,6 @@ namespace RTSEngine.Health
                         Building.WorkerMgr.Workers[0].BuilderComponent.Stop();
                     return;
                 }
-
 
                 Add(new HealthUpdateArgs(value: nextCurrHealth - CurrHealth, source: Building.WorkerMgr.Workers[0]));
             }

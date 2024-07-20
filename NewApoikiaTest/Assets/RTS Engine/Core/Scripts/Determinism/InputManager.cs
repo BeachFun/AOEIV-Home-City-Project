@@ -281,6 +281,7 @@ namespace RTSEngine.Determinism
 
         public void LaunchInput(CommandInput input)
         {
+            Debug.Log("!!!LAUNCH INPUT: " + (InputMode)input.sourceMode);
             switch ((InputMode)input.sourceMode)
             {
                 case InputMode.master:
@@ -449,11 +450,14 @@ namespace RTSEngine.Determinism
 
         private void OnEntityInput(CommandInput input)
         {
+
             if (!GetInputSourceEntity(input, out IEntity sourceEntity))
                 return;
 
             spawnedEntities.TryGetValue(input.targetID, out IEntity target);
             TargetData<IEntity> targetData = new TargetData<IEntity> { instance = target, position = input.targetPosition, opPosition = input.opPosition };
+
+            Debug.Log("!!! OnEntityInput: " + (InputMode)input.targetMode);
 
             switch ((InputMode)input.targetMode)
             {
@@ -468,7 +472,7 @@ namespace RTSEngine.Determinism
                     break;
 
                 case InputMode.setComponentTarget:
-
+                    Debug.Log("!!! SET COMPONENT TARGET INPUT");
                     SetTargetInputDataBooleans setTargetBooleans = (SetTargetInputDataBooleans)input.intValues.Item1;
 
                     sourceEntity.EntityTargetComponents[input.code].SetTargetLocal(
